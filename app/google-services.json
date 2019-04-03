@@ -1,0 +1,44 @@
+{
+  "project_info": {
+    "project_number": "922241453420",
+    "firebase_url": "https://ecommerceserverapp.firebaseio.com",
+    "project_id": "ecommerceserverapp",
+    "storage_bucket": "ecommerceserverapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:922241453420:android:38ab4a25c83e8ccc",
+        "android_client_info": {
+          "package_name": "com.qodeigence.prakash.ecommerce_server_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "922241453420-hnas3drkd2duo8fk5b3lg85v7djlc1e7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.qodeigence.prakash.ecommerce_server_app",
+            "certificate_hash": "e4c359d9db5c2dc14a62c6b4f75672db52452274"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLtwW05ZPsuYl0NNe2gnDPorHyk6EqOpI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "922241453420-eiqs635k36p59rhn8thjkud48q8fgde9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
