@@ -2,6 +2,7 @@ package com.qodeigence.prakash.ecommerce_server_app;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,8 +17,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.qodeigence.prakash.ecommerce_server_app.Common.Common;
+import com.qodeigence.prakash.ecommerce_server_app.Model.User;
 
-import Model.User;
 
 public class SignIn extends AppCompatActivity {
 
@@ -31,7 +33,6 @@ public class SignIn extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-
         edtPhone = (EditText)  findViewById(R.id.edtPhone);
         edtPassword = (EditText)  findViewById(R.id.edtPassword);
         btnSignIn = (Button) findViewById(R.id.btnSignIn);
@@ -75,7 +76,10 @@ public class SignIn extends AppCompatActivity {
                     {
                         if(user.getPassword().equals(localPassword))
                         {
-                            // Login Ok
+                            Intent login = new Intent(SignIn.this,Home.class);
+                            Common.currentUser = user;
+                            startActivity(login);
+                            finish();
 
                         }
                         else

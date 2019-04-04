@@ -1,38 +1,104 @@
 {
   "project_info": {
-    "project_number": "922241453420",
-    "firebase_url": "https://ecommerceserverapp.firebaseio.com",
-    "project_id": "ecommerceserverapp",
-    "storage_bucket": "ecommerceserverapp.appspot.com"
+    "project_number": "285188382539",
+    "firebase_url": "https://tejasphirke-1ea15.firebaseio.com",
+    "project_id": "tejasphirke-1ea15",
+    "storage_bucket": "tejasphirke-1ea15.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:922241453420:android:38ab4a25c83e8ccc",
+        "mobilesdk_app_id": "1:285188382539:android:ad3b07fd26e1b411",
         "android_client_info": {
-          "package_name": "com.qodeigence.prakash.ecommerce_server_app"
+          "package_name": "com.qodeigence.prakash.ecommerce"
         }
       },
       "oauth_client": [
         {
-          "client_id": "922241453420-hnas3drkd2duo8fk5b3lg85v7djlc1e7.apps.googleusercontent.com",
+          "client_id": "285188382539-1tcv2slj1h9j37kligmj3ejui4kbrope.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.qodeigence.prakash.ecommerce_server_app",
-            "certificate_hash": "e4c359d9db5c2dc14a62c6b4f75672db52452274"
+            "package_name": "com.qodeigence.prakash.ecommerce",
+            "certificate_hash": "b0a26a0de7423cc69e98403238442c31e22c7629"
           }
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBLtwW05ZPsuYl0NNe2gnDPorHyk6EqOpI"
+          "current_key": "AIzaSyDoqGI5gsIxo-VinhJRIh4rq_61cKVvPz8"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "922241453420-eiqs635k36p59rhn8thjkud48q8fgde9.apps.googleusercontent.com",
+              "client_id": "285188382539-t7hgq34bi037ld7991cmmovvd09kd6vd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:285188382539:android:38ab4a25c83e8ccc",
+        "android_client_info": {
+          "package_name": "com.qodeigence.prakash.ecommerce_server_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "285188382539-j6t2eoqra6gb2e591klfhfvv6v3p47bc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.qodeigence.prakash.ecommerce_server_app",
+            "certificate_hash": "b0a26a0de7423cc69e98403238442c31e22c7629"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDoqGI5gsIxo-VinhJRIh4rq_61cKVvPz8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "285188382539-t7hgq34bi037ld7991cmmovvd09kd6vd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:285188382539:android:1598a6970463653b",
+        "android_client_info": {
+          "package_name": "com.tejasphirke.ecommerceapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "285188382539-8371p2nd6gieg9br3m6f47fb75h98cp3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tejasphirke.ecommerceapp",
+            "certificate_hash": "b0a26a0de7423cc69e98403238442c31e22c7629"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDoqGI5gsIxo-VinhJRIh4rq_61cKVvPz8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "285188382539-t7hgq34bi037ld7991cmmovvd09kd6vd.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

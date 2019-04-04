@@ -8,10 +8,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.FirebaseApp;
+
 public class MainActivity extends AppCompatActivity {
 
     Button btnSignIn;
     TextView txtSlogan;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,4 +1,4 @@
-package Model;
+package com.qodeigence.prakash.ecommerce_server_app.Model;
 
 public class User {
     private  String Name, Password, Phone, IsStaff;
