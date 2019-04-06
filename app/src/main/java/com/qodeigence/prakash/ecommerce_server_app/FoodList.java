@@ -167,10 +167,14 @@ public class FoodList extends AppCompatActivity {
                 @Override
                 protected void populateViewHolder(FoodViewHolder viewHolder, Food model, int position) {
                     viewHolder.food_name.setText(model.getName());
-
+                    if (model.getImage().isEmpty()) {
+                        viewHolder.food_image.setImageResource(R.drawable.ic_restaurant_black_24dp);
+                    } else{
                         Picasso.with(getBaseContext())
                                 .load(model.getImage())
                                 .into(viewHolder.food_image);
+                    }
+
 
 
 
