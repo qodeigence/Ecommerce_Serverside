@@ -1,9 +1,10 @@
 package com.qodeigence.prakash.ecommerce_server_app;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,7 +17,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.qodeigence.prakash.ecommerce_server_app.Common.Common;
 import com.qodeigence.prakash.ecommerce_server_app.Interface.ItemClickListener;
-import com.qodeigence.prakash.ecommerce_server_app.Model.Order;
 import com.qodeigence.prakash.ecommerce_server_app.Model.Request;
 import com.qodeigence.prakash.ecommerce_server_app.ViewHolder.OrderViewHolder;
 
@@ -57,7 +57,7 @@ public class OrderStatus extends AppCompatActivity {
                 requests
         ) {
             @Override
-            protected void populateViewHolder(OrderViewHolder viewHolder, Request model, int position) {
+            protected void populateViewHolder(OrderViewHolder viewHolder, final Request model, int position) {
                 viewHolder.txtOrderId.setText(adapter.getRef(position).getKey());
                 viewHolder.txtOrderStatus.setText(Common.convertCodeToStatus(model.getStatus()));
                 viewHolder.txtOrderAddress.setText(model.getAddress());
@@ -66,7 +66,9 @@ public class OrderStatus extends AppCompatActivity {
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
                     public void onClick(View view, int position, boolean isLongClick) {
-
+                        Intent trackingOrder = new Intent(OrderStatus.this,TrackingOrder.class);
+                        Common.currentRequest = model;
+                        startActivity(trackingOrder);
                     }
                 });
             }
