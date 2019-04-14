@@ -8,26 +8,20 @@ public class Request {
     private String address;
     private String status;
     private String total;
+    private String comment;
     private List<Order> foods; //List of food order
 
     public Request() {
     }
 
-    public Request(String phone, String name, String address, String total, List<Order> foods) {
+    public Request(String phone, String name, String address, String status, String total, String comment, List<Order> foods) {
         this.phone = phone;
         this.name = name;
         this.address = address;
-        this.total = total;
-        this.foods = foods;
-        this.status = "0" ;  // Default 0:Plassed, 1: Shipping, 2: Shipped
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
         this.status = status;
+        this.total = total;
+        this.comment = comment;
+        this.foods = foods;
     }
 
     public String getPhone() {
@@ -54,12 +48,28 @@ public class Request {
         this.address = address;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public String getTotal() {
         return total;
     }
 
     public void setTotal(String total) {
         this.total = total;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public List<Order> getFoods() {
