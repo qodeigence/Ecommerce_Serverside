@@ -2,11 +2,13 @@ package com.qodeigence.prakash.ecommerce_server_app.Common;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 
 import com.qodeigence.prakash.ecommerce_server_app.Model.Request;
 import com.qodeigence.prakash.ecommerce_server_app.Model.User;
+import com.qodeigence.prakash.ecommerce_server_app.Remote.APIService;
+import com.qodeigence.prakash.ecommerce_server_app.Remote.FCMRetrofitClient;
 import com.qodeigence.prakash.ecommerce_server_app.Remote.IGeoCoordinates;
 import com.qodeigence.prakash.ecommerce_server_app.Remote.RetrofitClient;
 
@@ -18,7 +20,8 @@ public class Common {
 
     public static final int PICK_IMAGE_REQUEST = 71;
 
-    public static final String baseUrl = "http://maps.googleapis.com";
+    public static final String baseUrl = "https://maps.googleapis.com";
+    public static final String fcmUrl = "https://maps.googleapis.com/";
 
     public static String convertCodeToStatus(String code){
         if(code.equals("0")){
@@ -29,6 +32,11 @@ public class Common {
         }
         else
             return "Shipped";
+    }
+
+    public static APIService getFCMClient()
+    {
+        return FCMRetrofitClient.getClient(fcmUrl).create(APIService.class);
     }
 
     public static IGeoCoordinates getGeoCodeService()

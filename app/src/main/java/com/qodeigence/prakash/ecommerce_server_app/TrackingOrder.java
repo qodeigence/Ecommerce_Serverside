@@ -133,7 +133,7 @@ public class TrackingOrder extends FragmentActivity implements OnMapReadyCallbac
                     JSONObject jsonObject = new JSONObject(response.body().toString());
 
                     String lat = ((JSONObject)jsonObject.get("results"))
-                                    .getJSONObject(String.valueOf(0))
+                                    .getJSONObject(String.valueOf(0)) //error if we use 0 instead of String(valueOf(0))
                                     .getJSONObject("geometry")
                                     .getJSONObject("location")
                                     .get("lat").toString();

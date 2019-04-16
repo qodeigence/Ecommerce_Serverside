@@ -12,7 +12,7 @@ import com.qodeigence.prakash.ecommerce_server_app.R;
 
 @TargetApi(Build.VERSION_CODES.M)
 public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
-        View.OnLongClickListener,
+
         View.OnCreateContextMenuListener {
 
     public TextView txtOrderId;
@@ -30,7 +30,6 @@ public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnC
         txtOrderId = (TextView)itemView.findViewById(R.id.order_id);
 
         itemView.setOnClickListener(this);
-        itemView.setOnLongClickListener(this);
         itemView.setOnCreateContextMenuListener(this);
     }
 
@@ -51,9 +50,5 @@ public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnC
         contextMenu.add(0,1,getAdapterPosition(),"Delete");
     }
 
-    @Override
-    public boolean onLongClick(View view) {
-        itemClickListener.onClick(view,getAdapterPosition(),true);
-        return true;
-    }
+
 }
