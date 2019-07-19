@@ -22,12 +22,14 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -123,6 +125,12 @@ public class Home extends AppCompatActivity
         //send token
         updateToken(FirebaseInstanceId.getInstance().getToken());
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.startListening();
     }
 
     private void updateToken(String token) {
@@ -228,6 +236,12 @@ public class Home extends AppCompatActivity
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        adapter.startListening();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == Common.PICK_IMAGE_REQUEST && resultCode == RESULT_OK
@@ -246,14 +260,14 @@ public class Home extends AppCompatActivity
     }
 
     private void loadMenu() {
-        adapter = new FirebaseRecyclerAdapter<Category, MenuViewHolder>(
-                Category.class,
-                R.layout.menu_item,
-                MenuViewHolder.class,
-                categories)
-        {
+
+        FirebaseRecyclerOptions<Category> options = new FirebaseRecyclerOptions.Builder<Category>()
+                .setQuery(categories,Category.class)
+                .build();
+
+        adapter = new FirebaseRecyclerAdapter<Category, MenuViewHolder>(options) {
             @Override
-            protected void populateViewHolder(MenuViewHolder viewHolder, Category model, int position) {
+            protected void onBindViewHolder(@NonNull MenuViewHolder viewHolder, int position, @NonNull Category model) {
                 viewHolder.txtMenuName.setText(model.getName());
                 Picasso.with(Home.this).load(model.getImage())
                         .into(viewHolder.imageView);
@@ -267,11 +281,25 @@ public class Home extends AppCompatActivity
                         startActivity(foodList);
                     }
                 });
+            }
 
+            @NonNull
+            @Override
+            public MenuViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View itemView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.menu_item,parent,false);
+                return new MenuViewHolder(itemView);
             }
         };
+        adapter.startListening();
         adapter.notifyDataSetChanged(); //Refresh data if hac=ve data changed
         recycler_menu.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
     }
 
     @Override
@@ -319,7 +347,10 @@ public class Home extends AppCompatActivity
         } else if (id == R.id.nav_orders) {
             Intent orders = new Intent(Home.this,OrderStatus.class);
             startActivity(orders);
-        } else if (id == R.id.nav_sign_out) {
+        } else if(id == R.id.nav_banner){
+            Intent banner = new Intent(Home.this,BannerActivity.class);
+            startActivity(banner);
+        }else if (id == R.id.nav_sign_out) {
 
         }
 
@@ -346,7 +377,7 @@ public class Home extends AppCompatActivity
     private void deleteCategory(String key) {
 
         //First we need to get all food in category
-        DatabaseReference foods = database.getReference("Foods");
+        DatabaseReference foods = database.getReference("Food");
         Query foodInCategory = foods.orderByChild("menuId").equalTo(key);
         foodInCategory.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

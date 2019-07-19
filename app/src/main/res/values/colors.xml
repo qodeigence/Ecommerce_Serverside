@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
+    <!--<color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorAccent">#D81B60</color>-->
+    <color name="colorPrimary">#B50606</color>
+    <color name="colorPrimaryDark">#7C0404</color>
+    <color name="colorAccent">#DC0707</color>
+    <color name="colorPrimaryFaint">#FFCDD2</color>
+    <color name="faintYellow">#FFF176</color>
+    <color name="faintGreen">#A5D6A7</color>
 
     <color name="btnSignUp">#D81B60</color>
     <color name="btnSignActive">#A9d440</color>

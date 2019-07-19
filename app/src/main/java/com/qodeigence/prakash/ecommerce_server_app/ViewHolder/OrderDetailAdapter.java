@@ -14,14 +14,15 @@ import java.util.List;
 
 class MyViewHolder extends RecyclerView.ViewHolder{
 
-    public TextView name,quantity,price,discount;
+    public TextView name,quantity,price,discount,pincode;
 
     public MyViewHolder(View itemView){
         super(itemView);
-        name = (TextView)itemView.findViewById(R.id.product_name);
-        quantity = (TextView)itemView.findViewById(R.id.product_quantity);
-        price = (TextView)itemView.findViewById(R.id.product_price);
-        discount = (TextView)itemView.findViewById(R.id.product_discount);
+        name = itemView.findViewById(R.id.product_name);
+        quantity = itemView.findViewById(R.id.product_quantity);
+        price = itemView.findViewById(R.id.product_price);
+        discount = itemView.findViewById(R.id.product_discount);
+        pincode = itemView.findViewById(R.id.pin_code);
     }
 }
 
@@ -43,11 +44,10 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<MyViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Order order = myOrders.get(position);
-        holder.name.setText(String.format("Name : %s",order.getProductName()));
+        holder.name.setText(String.format("Food Name : %s",order.getProductName()));
         holder.quantity.setText(String.format("Quantity : %s",order.getQuantity()));
-        holder.price.setText(String.format("Price : %s",order.getPrice()));
-        holder.discount.setText(String.format("Quantity : %s",order.getDiscount()));
-
+        holder.price.setText(String.format("Price : ₹%s",order.getPrice()));
+        holder.discount.setText(String.format("Discount : ₹%s",order.getDiscount()));
     }
 
     @Override

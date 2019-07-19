@@ -3,7 +3,7 @@ package com.qodeigence.prakash.ecommerce_server_app.Service;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.FirebaseInstanceIdService;
+// import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.qodeigence.prakash.ecommerce_server_app.Common.Common;
 import com.qodeigence.prakash.ecommerce_server_app.Model.Token;
 
@@ -15,7 +15,8 @@ public class MyFirebaseIdService extends FirebaseInstanceIdService {
     public void onTokenRefresh() {
         super.onTokenRefresh();
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        updateToServer(refreshedToken);
+        if (Common.currentUser != null)
+            updateToServer(refreshedToken);
     }
 
     private void updateToServer(String refreshedToken) {

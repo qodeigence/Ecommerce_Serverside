@@ -11,7 +11,7 @@ import com.qodeigence.prakash.ecommerce_server_app.ViewHolder.OrderDetailAdapter
 
 public class OrderDetail extends AppCompatActivity {
 
-    TextView order_id,order_phone,order_address,order_total,order_comment;
+    TextView order_id,order_phone,order_address,order_total,pincode,txtDateTime;
     String order_id_value="";
     RecyclerView lstFoods;
     RecyclerView.LayoutManager layoutManager;
@@ -25,7 +25,8 @@ public class OrderDetail extends AppCompatActivity {
         order_phone = (TextView) findViewById(R.id.order_phone);
         order_address = (TextView) findViewById(R.id.order_address);
         order_total = (TextView) findViewById(R.id.order_total);
-        order_comment = (TextView) findViewById(R.id.order_comment);
+        pincode = findViewById(R.id.pin_code);
+        txtDateTime = findViewById(R.id.order_date);
 
         lstFoods = (RecyclerView)findViewById(R.id.lstFoods);
         lstFoods.setHasFixedSize(true);
@@ -41,7 +42,8 @@ public class OrderDetail extends AppCompatActivity {
         order_phone.setText(Common.currentRequest.getPhone());
         order_address.setText(Common.currentRequest.getAddress());
         order_total.setText(Common.currentRequest.getTotal());
-        order_comment.setText(Common.currentRequest.getComment());
+        pincode.setText(Common.currentRequest.getPincode());
+
 
         OrderDetailAdapter adapter = new OrderDetailAdapter(Common.currentRequest.getFoods());
         adapter.notifyDataSetChanged();

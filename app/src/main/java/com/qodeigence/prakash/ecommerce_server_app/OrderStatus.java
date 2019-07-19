@@ -2,6 +2,7 @@ package com.qodeigence.prakash.ecommerce_server_app;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -10,12 +11,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
-
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,7 +24,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.qodeigence.prakash.ecommerce_server_app.Common.Common;
-import com.qodeigence.prakash.ecommerce_server_app.Interface.ItemClickListener;
 import com.qodeigence.prakash.ecommerce_server_app.Model.MyResponse;
 import com.qodeigence.prakash.ecommerce_server_app.Model.Notification;
 import com.qodeigence.prakash.ecommerce_server_app.Model.Request;
@@ -40,6 +40,7 @@ public class OrderStatus extends AppCompatActivity {
 
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
+    LinearLayoutManager mlayoutmanager;
 
     FirebaseRecyclerAdapter<Request,OrderViewHolder> adapter;
 
@@ -49,6 +50,7 @@ public class OrderStatus extends AppCompatActivity {
     MaterialSpinner spinner;
 
     APIService mService;
+    AlertDialog.Builder builder;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,67 +62,135 @@ public class OrderStatus extends AppCompatActivity {
 
         //Init service
         mService = Common.getFCMClient();
+        mlayoutmanager = new LinearLayoutManager(this);
+        mlayoutmanager.setReverseLayout(true);
+        mlayoutmanager.setStackFromEnd(true);
 
         //Init
         recyclerView = (RecyclerView)findViewById(R.id.listOrders);
         recyclerView.setHasFixedSize(true);
-        layoutManager =  new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+       // layoutManager =  new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(mlayoutmanager);
 
         loadOrders();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.startListening();
+    }
+
     private void loadOrders() {
-        adapter = new FirebaseRecyclerAdapter<Request, OrderViewHolder>(
-                Request.class,
-                R.layout.order_layout,
-                OrderViewHolder.class,
-                requests
-        ) {
+
+        FirebaseRecyclerOptions<Request> options = new FirebaseRecyclerOptions.Builder<Request>()
+                .setQuery(requests,Request.class)
+                .build();
+
+        adapter = new FirebaseRecyclerAdapter<Request, OrderViewHolder>(options) {
             @Override
-            protected void populateViewHolder(OrderViewHolder viewHolder, final Request model, int position) {
+            protected void onBindViewHolder(@NonNull OrderViewHolder viewHolder, final int position, @NonNull final Request model) {
                 viewHolder.txtOrderId.setText(adapter.getRef(position).getKey());
                 viewHolder.txtOrderStatus.setText(Common.convertCodeToStatus(model.getStatus()));
                 viewHolder.txtOrderAddress.setText(model.getAddress());
                 viewHolder.txtOrderPhone.setText(model.getPhone());
+                viewHolder.txtOrderDate.setText(Common.getDate(Long.parseLong(adapter.getRef(position).getKey())));
+                viewHolder.txtpincode.setText(model.getPincode());
+                viewHolder.txtUserName.setText(model.getName());
+                viewHolder.txtMail.setText(model.getMail());
+                if(viewHolder.txtOrderStatus.getText().toString().equals("Placed")){
+                    viewHolder.cardView.setCardBackgroundColor(getResources().getColor(R.color.colorPrimaryFaint));
+                }else if(viewHolder.txtOrderStatus.getText().toString().equals("On my way")){
+                    viewHolder.cardView.setCardBackgroundColor(getResources().getColor(R.color.faintYellow));
+                }else if(viewHolder.txtOrderStatus.getText().toString().equals("Shipped")){
+                    viewHolder.cardView.setCardBackgroundColor(getResources().getColor(R.color.faintGreen));
+                }
 
-                viewHolder.setItemClickListener(new ItemClickListener() {
+                //New event button
+                viewHolder.btnEdit.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View view, int position, boolean isLongClick) {
-                       if(!isLongClick)
-                       {
-                           Intent trackingOrder = new Intent(OrderStatus.this,TrackingOrder.class);
-                           Common.currentRequest = model;
-                           startActivity(trackingOrder);
-                       }
-                       /*
-                       else
-                       {
-                           Intent orderdetail = new Intent(OrderStatus.this,OrderDetail.class);
-                           Common.currentRequest = model;
-                           orderdetail.putExtra("OrderId",adapter.getRef(position).getKey());
-                           startActivity(orderdetail);
-                       }
-                       */
+                    public void onClick(View v) {
+                        showUpdateDialog(adapter.getRef(position).getKey(),adapter.getItem(position));
+                    }
+                });
+                viewHolder.btnRemove.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        builder = new AlertDialog.Builder(OrderStatus.this);
+                        //Uncomment the below code to Set the message and title from the strings.xml file
+                        builder.setMessage("Are you sure to delete this order? UserName: "+model.getName()+"\nOrder status: "+Common.convertCodeToStatus(model.getStatus()))
+                                .setTitle("Order deletion confirmation")
+                                .setCancelable(false)
+                                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        deleteOrder(adapter.getRef(position).getKey());
+                                        loadOrders();
+                                    }
+                                })
+                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        //  Action for 'NO' Button
+                                        dialog.cancel();
+                                    }
+                                })
+                                .setCancelable(true);
+                        //Creating dialog box
+                        AlertDialog alert = builder.create();
+                        //Setting the title manually
+                        //alert.setTitle("Please read Instructions before proceeding");
+                        alert.show();
+
+                    }
+                });
+                viewHolder.btnDetail.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent orderDetail = new Intent(OrderStatus.this,OrderDetail.class);
+                        Common.currentRequest = model;
+                        orderDetail.putExtra("OrderId",adapter.getRef(position).getKey());
+                        startActivity(orderDetail);
+                    }
+                });
+                viewHolder.btnDirection.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent trackingOrder = new Intent(OrderStatus.this,TrackingOrder.class);
+                        Common.currentRequest = model;
+                        startActivity(trackingOrder);
+                    }
+                });
+                viewHolder.btnCall.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", model.getPhone(), null)));
                     }
                 });
             }
+
+            @NonNull
+            @Override
+            public OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
+                View itemView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.order_layout,parent,false);
+                return new OrderViewHolder(itemView);
+            }
         };
+        adapter.startListening();
         adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
     }
 
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        if(item.getTitle().equals(Common.UPDATE))
-            showUpdateDialog(adapter.getRef(item.getOrder()).getKey(),adapter.getItem(item.getOrder()));
-        else  if(item.getTitle().equals(Common.DELETE))
-            deleteOrder(adapter.getRef(item.getOrder()).getKey());
-        return super.onContextItemSelected(item);
-    }
 
     private void deleteOrder(String key) {
         requests.child(key).removeValue();
+        adapter.startListening();
+        adapter.notifyDataSetChanged();
     }
 
     private void showUpdateDialog(String key, final Request item) {
@@ -131,7 +201,7 @@ public class OrderStatus extends AppCompatActivity {
         LayoutInflater inflater = this.getLayoutInflater();
         final View view = inflater.inflate(R.layout.update_order_layout,null);
 
-        spinner = (MaterialSpinner)view.findViewById(R.id.statusSpinner);
+        spinner = view.findViewById(R.id.statusSpinner);
         spinner.setItems("Placed","On my way","Shipped");
 
         alertDialog.setView(view);
@@ -144,6 +214,7 @@ public class OrderStatus extends AppCompatActivity {
                 item.setStatus(String.valueOf(spinner.getSelectedIndex()));
 
                 requests.child(localKey).setValue(item);
+                adapter.notifyDataSetChanged();
 
                 sendOrderStatusToUser(localKey,item);
             }
@@ -158,7 +229,6 @@ public class OrderStatus extends AppCompatActivity {
         alertDialog.show();
 
     }
-
     private void sendOrderStatusToUser(final String Key,final Request item) {
         DatabaseReference tokens = db.getReference("Tokens");
         tokens.orderByKey().equalTo(item.getPhone())
@@ -170,25 +240,30 @@ public class OrderStatus extends AppCompatActivity {
                             Token token = postSnapShot.getValue(Token.class);
 
                             //make raw payload
-                            Notification notification = new Notification("Qodeigence","Your Order "+Key+" swas updated");
-                            Sender content = new Sender(token.getToken(),notification);
+                            Notification notification = new Notification("J-One","Your Order "+Key+" status :"+Common.convertCodeToStatus(item.getStatus()));
+                            com.qodeigence.prakash.ecommerce_server_app.Model.Sender content = new Sender(token.getToken(),notification);
+
+
 
                             mService.sendNotification(content)
                                     .enqueue(new Callback<MyResponse>() {
                                         @Override
-                                        public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
-                                            if (response.body().success == 1)
-                                            {
-                                                Toast.makeText(OrderStatus.this, "Order was updated !", Toast.LENGTH_SHORT).show();
-                                            }
-                                            else
-                                            {
-                                                Toast.makeText(OrderStatus.this, "Order was updated but failed to send notification", Toast.LENGTH_SHORT).show();
+                                        public void onResponse(@NonNull Call<MyResponse> call, Response<MyResponse> response) {
+
+                                            if (response.body() != null) {
+                                                if (response.body().success == 1)
+                                                {
+                                                    Toast.makeText(OrderStatus.this, "Order was updated !", Toast.LENGTH_SHORT).show();
+                                                }
+                                                else
+                                                {
+                                                    Toast.makeText(OrderStatus.this, "Order was updated but failed to send notification", Toast.LENGTH_SHORT).show();
+                                                }
                                             }
                                         }
 
                                         @Override
-                                        public void onFailure(Call<MyResponse> call, Throwable t) {
+                                        public void onFailure(@NonNull Call<MyResponse> call, Throwable t) {
                                             Log.e("ERROR",t.getMessage());
                                         }
                                     });

@@ -4,42 +4,42 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.qodeigence.prakash.ecommerce_server_app.Common.Common;
 import com.qodeigence.prakash.ecommerce_server_app.Interface.ItemClickListener;
-import com.qodeigence.prakash.ecommerce_server_app.Model.Category;
 import com.qodeigence.prakash.ecommerce_server_app.Model.Food;
 import com.qodeigence.prakash.ecommerce_server_app.ViewHolder.FoodViewHolder;
 import com.squareup.picasso.Picasso;
 
 import java.util.UUID;
-
-import static com.qodeigence.prakash.ecommerce_server_app.Common.Common.PICK_IMAGE_REQUEST;
 
 public class FoodList extends AppCompatActivity {
 
@@ -101,6 +101,18 @@ public class FoodList extends AppCompatActivity {
             loadListFood(categoryId);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        adapter.startListening();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.startListening();
+    }
+
     private void showAddFoodDialog() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(FoodList.this);
         alertDialog.setTitle("Add new Food");
@@ -158,37 +170,51 @@ public class FoodList extends AppCompatActivity {
     }
 
     private void loadListFood(String categoryId) {
-            adapter = new FirebaseRecyclerAdapter<Food, FoodViewHolder>(
-                    Food.class,
-                    R.layout.food_item,
-                    FoodViewHolder.class,
-                    foodList.orderByChild("menuId").equalTo(categoryId)
-            ) {
-                @Override
-                protected void populateViewHolder(FoodViewHolder viewHolder, Food model, int position) {
-                    viewHolder.food_name.setText(model.getName());
-                    if (model.getImage().isEmpty()) {
-                        viewHolder.food_image.setImageResource(R.drawable.ic_restaurant_black_24dp);
-                    } else{
-                        Picasso.with(getBaseContext())
-                                .load(model.getImage())
-                                .into(viewHolder.food_image);
-                    }
+        Query listFoodByCategoryId = foodList.orderByChild("menuId").equalTo(categoryId);
 
+        FirebaseRecyclerOptions<Food> options = new FirebaseRecyclerOptions.Builder<Food>()
+                .setQuery(listFoodByCategoryId,Food.class)
+                .build();
 
-
-
-                    viewHolder.setItemClickListener(new ItemClickListener() {
-                        @Override
-                        public void onClick(View view, int position, boolean isLongClick) {
-                            //Code later
-                        }
-                    });
+        adapter = new FirebaseRecyclerAdapter<Food, FoodViewHolder>(options) {
+            @Override
+            protected void onBindViewHolder(@NonNull FoodViewHolder viewHolder, int position, @NonNull Food model) {
+                viewHolder.food_name.setText(model.getName());
+                if (model.getImage().isEmpty()) {
+                    viewHolder.food_image.setImageResource(R.drawable.ic_restaurant_black_24dp);
+                } else{
+                    Picasso.with(getBaseContext())
+                            .load(model.getImage())
+                            .into(viewHolder.food_image);
                 }
-            };
+
+                viewHolder.setItemClickListener(new ItemClickListener() {
+                    @Override
+                    public void onClick(View view, int position, boolean isLongClick) {
+                        //Code later
+                    }
+                });
+            }
+
+            @NonNull
+            @Override
+            public FoodViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View itemView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.food_item,parent,false);
+                return new FoodViewHolder(itemView);
+            }
+        };
+
             adapter.notifyDataSetChanged();
             recyclerView.setAdapter(adapter);
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
+    }
+
     private void uploadImage() {
         if(saveUri != null)
         {
